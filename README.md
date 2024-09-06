@@ -1,50 +1,57 @@
 # Arch Linux on WSL 2
-Here are some basic instructions for installing Arch Linux on WSL 2 only with wsl.exe.  
-Based on [Import any Linux distribution to use with WSL | Microsoft Learn](https://learn.microsoft.com/en-us/windows/wsl/use-custom-distro)
+Basic instructions on installing Arch Linux for WSL 2.  
+> Based on [Import any Linux distribution to use with WSL | Microsoft Learn](https://learn.microsoft.com/en-us/windows/wsl/use-custom-distro)
 
 
-## Prerequisites
-- WSL & Hyper-V enabled
-- A disposable Linux distro running WSL 2 with Docker installed
+## 0 Prerequisites
+- Several Windows features in control panel turned on
+  - Windows Subsystem for Linux
+  - Virtual Machine Platform
+- A running Linux distro
+  - in WSL 2
+  - with Docker installed
+    - quick installation: `curl -fsSL https://get.docker.com -o get-docker.sh`, then `sudo sh get-docker.sh`
 
-
-## Obtaining the tar file via Docker.
-1. Start the Linux distro in command line (Debian GNU/Linux 11 in this example).
-2. Switch to the root user, since the distro is disposable, to avoid typing too many `sudo`s with Docker commands.
+## 1 Obtain the tar file via Docker
+1. Start the distro.
+2. Switch to root (for not typing too many `sudo`s).
 ```bash
-sudo su
+su root
 ```
-2. In bash, start the Docker service.
+3. Start Docker service.
 ```bash
-service docker start
+service docker start    # non-systemd, e.g. init.d
 ```
-3. Pull the Arch image from the official repository.
+```bash
+systemctl start docker  # systemd
+```
+4. Pull Arch image.
 ```bash
 docker pull archlinux
 ```
-4. Create a container using the image.
+5. Create a container.
 ```bash
 docker run archlinux
 ```
-5. Get the container ID.
+6. Get container ID.
 ```bash
 DockerContainerID=$(docker container ls -a | grep -i archlinux | awk '{print $1}')
 ```
-6. Export the Arch container into a tar file.
+7. Export into tar.
 ```bash
 docker export $DockerContainerID > /mnt/d/archlinux.tar
 ```
-## Importing the tar file into WSL
-1. Start PowerShell.
-2. In PowerShell, use `wsl --import <DistroName> <InstallLocation> <InstallTarFile>`.
+## 2 Importing the tar file into WSL
+1. Start a shell.
+2. Execute `wsl --import <DistroName> <InstallLocation> <InstallTarFile>`.
 ```PowerShell
-wsl --import Arch D:\Arch D:\archlinux.tar
+wsl --import Arch D:\arch-wsl2\ D:\archlinux.tar
 ```
 3. Check it out.
 ```Powershell
 wsl -l -v
 ```
-4. Start Arch and configure.
+4. Start and configure.
 ```bash
 wsl -d Arch
 ```
